@@ -36,7 +36,7 @@ public final class Earcut {
      * Triangulates the given polygon
      * 
      * @param data is a flat array of vertice coordinates like [x0,y0, x1,y1, x2,y2, ...].
-     * @param holeIndices is an array of hole indices if any (e.g. [5, 8] for a 12-vertice input would mean one hole with vertices 5-7 and another with 8-11).
+     * @param holeIndices is an array of hole indices if any (e.g. [5, 8] for a 12-vertice input would mean one hole with vertices 5-7 and another with 8-11). (relative to the offset)
      * @param dim  is the number of coordinates per vertice in the input array
      * @return List containing groups of three vertice indices in the resulting array forms a triangle.
      */
@@ -90,7 +90,7 @@ public final class Earcut {
         return triangles;
     }
 
-    private static void earcutLinked(Node ear, List<Integer> triangles, int dim, float minX, float minY, float invSize, int pass) {
+    private static void earcutLinked(Node ear, IntList triangles, int dim, float minX, float minY, float invSize, int pass) {
         if (ear == null)
             return;
 
@@ -146,7 +146,7 @@ public final class Earcut {
         }
     }
 
-    private static void splitEarcut(Node start, List<Integer> triangles, int dim, float minX, float minY, float size) {
+    private static void splitEarcut(Node start, IntList triangles, int dim, float minX, float minY, float size) {
         // look for a valid diagonal that divides the polygon into two
         Node a = start;
         do {
@@ -237,7 +237,7 @@ public final class Earcut {
         return num > 0 ? 1 : num < 0 ? -1 : 0;
     }
 
-    private static Node cureLocalIntersections(Node start, List<Integer> triangles, int dim) {
+    private static Node cureLocalIntersections(Node start, IntList triangles, int dim) {
         Node p = start;
         do {
             Node a = p.prev, b = p.next.next;
