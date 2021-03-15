@@ -16,7 +16,7 @@ public class Test01 {
     
     @Test
     public void polygonWithHole() {
-        List<Integer> triangles = Earcut.earcut(new float[] { 0, 0, 100, 0, 100, 100, 0, 100, 20, 20, 80, 20, 80, 80, 20, 80 }, new int[] { 4 }, 2);
+        List<Integer> triangles = Earcut.earcut(new float[] {5, 0, 0, 100, 0, 100, 100, 0, 100, 20, 20, 80, 20, 80, 80, 20, 80 }, 1, 16, new int[] { 4 }, 2);
         // [3,0,4, 5,4,0, 3,4,7, 5,0,1, 2,3,7, 6,5,1, 2,7,6, 6,1,2]
         Assert.assertArrayEquals(new Object[] {3,0,4, 5,4,0, 3,4,7, 5,0,1, 2,3,7, 6,5,1, 2,7,6, 6,1,2}, triangles.toArray());
     }

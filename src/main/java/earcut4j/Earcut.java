@@ -14,16 +14,24 @@ public final class Earcut {
     private Earcut() {
     }
 
+    public static IntList earcut(float[] data) {
+        return earcut(data, 0, data.length);
+    }
+
     /**
      * Triangulates the given polygon
      * 
      * @param data is a flat array of vertice coordinates like [x0,y0, x1,y1, x2,y2, ...].
      * @return List containing groups of three vertice indices in the resulting array forms a triangle.
      */
-    public static IntList earcut(float[] data) {
-        return earcut(data, null, 2);
+    public static IntList earcut(float[] data, int offset, int len) {
+        return earcut(data, offset, len, null, 2);
     }
-    
+
+    public static IntList earcut(float[] data, int[] holeIndices, int dim) {
+        return earcut(data, 0, data.length, holeIndices, dim);
+    }
+
     /**
      * Triangulates the given polygon
      * 
@@ -32,14 +40,13 @@ public final class Earcut {
      * @param dim  is the number of coordinates per vertice in the input array
      * @return List containing groups of three vertice indices in the resulting array forms a triangle.
      */
-    public static IntList earcut(float[] data, int[] holeIndices, int dim) {
-
+    public static IntList earcut(float[] data, int offset, int len, int[] holeIndices, int dim) {
         boolean hasHoles = holeIndices != null && holeIndices.length > 0;
-        int outerLen = hasHoles ? holeIndices[0] * dim : data.length;
+        int outerLen = hasHoles ? holeIndices[0] * dim : len;
 
-        Node outerNode = linkedList(data, 0, outerLen, dim, true);
+        Node outerNode = linkedList(data, offset, offset + outerLen, dim, true);
 
-        IntList triangles = new IntArrayList((data.length/dim) - 2); // number of triangles = edges - 2
+        IntList triangles = new IntArrayList((len/dim) - 2); // number of triangles = edges - 2
 
         if (outerNode == null || outerNode.next == outerNode.prev)
             return triangles;
@@ -51,17 +58,17 @@ public final class Earcut {
         float invSize = Float.MIN_VALUE;
 
         if (hasHoles)
-            outerNode = eliminateHoles(data, holeIndices, outerNode, dim);
+            outerNode = eliminateHoles(data, offset, len, holeIndices, outerNode, dim);
 
         // if the shape is not too simple, we'll use z-order curve hash later;
         // calculate polygon bbox
-        if (data.length > 80 * dim) {
-            minX = maxX = data[0];
-            minY = maxY = data[1];
+        if (len > 80 * dim) {
+            minX = maxX = data[offset];
+            minY = maxY = data[offset + 1];
 
             for (int i = dim; i < outerLen; i += dim) {
-                float x = data[i];
-                float y = data[i + 1];
+                float x = data[offset];
+                float y = data[offset + 1];
                 if (x < minX)
                     minX = x;
                 if (y < minY)
@@ -417,13 +424,13 @@ public final class Earcut {
         return list;
     }
 
-    private static Node eliminateHoles(float[] data, int[] holeIndices, Node outerNode, int dim) {
+    private static Node eliminateHoles(float[] data, int offset, int length, int[] holeIndices, Node outerNode, int dim) {
         List<Node> queue = new ArrayList<>();
 
         int len = holeIndices.length;
         for (int i = 0; i < len; i++) {
-            int start = holeIndices[i] * dim;
-            int end = i < len - 1 ? holeIndices[i + 1] * dim : data.length;
+            int start = holeIndices[i] * dim + offset;
+            int end = i < len - 1 ? holeIndices[i + 1] * dim : length + offset;
             Node list = linkedList(data, start, end, dim, false);
             if (list == list.next)
                 list.steiner = true;
