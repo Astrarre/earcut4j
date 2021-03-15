@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.earcut4j</groupId>
     <artifactId>earcut4j</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <name>earcut4j</name>
     <description>earcut4j for polygon triangulation</description>
 
